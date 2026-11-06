@@ -1,0 +1,16 @@
+#!/bin/bash
+# torne mobile (Mac) を開き直すランチャー
+# ウィンドウを閉じても裏に残る torneplus プロセスを終了してから起動する
+
+BUNDLE_ID="com.playstation.tornemobile"
+PROCESS="torneplus"
+
+killall "$PROCESS" 2>/dev/null
+
+# 終了を最大5秒待つ
+for _ in $(seq 1 20); do
+  pgrep -x "$PROCESS" >/dev/null || break
+  sleep 0.25
+done
+
+open -b "$BUNDLE_ID"
