@@ -50,7 +50,39 @@ Mac 版の torne mobile は iPhone/iPad 版アプリをそのまま動かして�
 xattr -dr com.apple.quarantine /Applications/torne再起動.app
 ```
 
-中身が気になる方は、このリポジトリの [`scripts/launch`](scripts/launch) がアプリの中身のすべてです（十数行のシェルスクリプトです）。
+アプリが何をしているかは、下の「[アプリの中身](#アプリの中身)」で全文を確認できます。
+
+## アプリの中身
+
+「torne再起動.app」の実体は、次のシェルスクリプト（[`scripts/launch`](scripts/launch)）だけです。ネットワーク通信やファイルの書き込みは一切行いません。
+
+```bash
+#!/bin/bash
+# torne mobile (Mac) を開き直すランチャー
+# ウィンドウを閉じても裏に残る torneplus プロセスを終了してから起動する
+
+BUNDLE_ID="com.playstation.tornemobile"
+PROCESS="torneplus"
+
+killall "$PROCESS" 2>/dev/null
+
+# 終了を最大5秒待つ
+for _ in $(seq 1 20); do
+  pgrep -x "$PROCESS" >/dev/null || break
+  sleep 0.25
+done
+
+open -b "$BUNDLE_ID"
+```
+
+| 部分 | していること |
+| --- | --- |
+| `BUNDLE_ID` / `PROCESS` | torne mobile のアプリ ID と、実際に動いているプロセス名（`torneplus`）。Mac 版 torne はアプリ名と中身のプロセス名が異なります |
+| `killall "$PROCESS"` | 裏に残っている torne を終了します。動いていなければ何もしません（エラー表示は捨てています） |
+| `for … pgrep … sleep` | torne が完全に終了するまで、0.25 秒おきに最大 20 回（5 秒）確認します。終了前に起動すると、また開かない状態になるためです |
+| `open -b "$BUNDLE_ID"` | アプリ ID を指定して torne mobile を開きます。アプリ名に「®」が含まれるため、名前ではなく ID で指定しています |
+
+`.app` の残りは、アプリ名やアイコンを指定する `Info.plist` とアイコン画像（`AppIcon.icns`）だけです。Dock にアイコンを出さずにすぐ終了するよう、`LSUIElement` を指定しています。
 
 ## アプリを使わない方法
 
