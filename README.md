@@ -1,6 +1,6 @@
 <p align="center"><img src="assets/icon.png" width="160" alt="torne再起動 アイコン"></p>
 
-# torne relaunch
+# torne再起動
 
 Mac で **torne® mobile** が「Dock のアイコンを押しても開かない」ときに、ワンクリックで開き直せるようにする小さなアプリです。
 ダウンロードしてアプリケーションフォルダに入れるだけで使えます。
